@@ -1,6 +1,6 @@
-# NOVA-CREATE-TEAM Official Website
+# vocalink-team Official Website
 
-NOVA-CREATE-TEAMの公式サイトです。
+vocalink-teamの公式サイトです。
 
 ## Sections
 - ABOUT
