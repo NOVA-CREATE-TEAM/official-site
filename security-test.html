@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOVA-CREATE-TEAM | Security Test</title>
+<title>vocalink-team | Security Test</title>
 <style>
 body{margin:0;background:#0b0d10;color:#eef2f5;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}.wrap{max-width:620px;margin:10vh auto;padding:20px}.panel{background:#12161b;border:1px solid #252c34;border-radius:18px;padding:24px}input,button{width:100%;box-sizing:border-box;padding:13px;margin:6px 0 12px;border-radius:10px;border:1px solid #252c34}input{background:#0d1115;color:#fff}button{background:#171c22;color:#fff;cursor:pointer;font-weight:800}button:disabled{opacity:.5}.msg{color:#8e9aa6}.success{color:#72d6a1}.error{color:#ff8d96}.warn{color:#f4c95d}.eyebrow{font-size:11px;letter-spacing:.18em;color:#91a0ad;font-weight:800}h1{font-size:42px;letter-spacing:-.05em}.note{padding:12px;border:1px solid #5a3035;background:#321f22;border-radius:12px;color:#ffc4c8}
 </style>
 </head>
-<body><div class="wrap"><div class="panel"><div class="eyebrow">NOVA-CREATE-TEAM / SECURITY</div><h1>TEST EVENT</h1><p class="note">これは実際のDDoSや不正アクセスを発生させず、管理用の擬似イベントを1件登録してDiscord通知経路を確認するテストです。</p><label>管理者メールアドレス</label><input id="email" type="email" autocomplete="username"><label>パスワード</label><input id="password" type="password" autocomplete="current-password"><button id="login">管理者ログイン</button><button id="test" disabled>🧪 Critical セキュリティ通知をテスト</button><div id="msg" class="msg"></div></div></div>
+<body><div class="wrap"><div class="panel"><div class="eyebrow">vocalink-team / SECURITY</div><h1>TEST EVENT</h1><p class="note">これは実際のDDoSや不正アクセスを発生させず、管理用の擬似イベントを1件登録してDiscord通知経路を確認するテストです。</p><label>管理者メールアドレス</label><input id="email" type="email" autocomplete="username"><label>パスワード</label><input id="password" type="password" autocomplete="current-password"><button id="login">管理者ログイン</button><button id="test" disabled>🧪 Critical セキュリティ通知をテスト</button><div id="msg" class="msg"></div></div></div>
 <script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const sb=createClient('https://qvxoxrzvxyyribqjnpkb.supabase.co','sb_publishable_1zOA0YpTtJkNYsmm4zXxsA_wSJpdHKe');
