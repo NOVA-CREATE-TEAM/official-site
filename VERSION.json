@@ -1,6 +1,6 @@
 {
   "product": "Vocalink-team Official Site",
-  "version": "v1.0.2",
+  "version": "v1.0.3",
   "updated": "2026-09-01",
   "versioning": {
     "major": "大規模変更",
@@ -8,6 +8,7 @@
     "patch": "軽微な修正"
   },
   "changes": [
+    "admin.htmlのボタン初期化エラーを再修正（致命的なJavaScript停止を解消）",
     "admin.htmlのクイック操作ボタン初期化エラーを修正",
     "querySelectorAllを使用して全ボタンのイベント登録を正常化",
     "admin.htmlのボタンイベント処理を修正",
