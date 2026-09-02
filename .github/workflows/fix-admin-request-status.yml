@@ -14,21 +14,16 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path('admin.html')
-          s=p.read_text()
-          old="""function renderRequests(list){$('#requestRows').innerHTML=list.length?list.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleString('ja-JP'))}</td><td>${esc(r.name)}<br><span class=\"msg\">${esc(r.email)}</span></td><td>${esc(r.category)}</td><td><a href=\"#\" class=\"request-link\" data-id=\"${esc(r.id)}\">${esc(r.title)}</a></td><td>${esc(r.budget)}</td><td>${esc(r.deadline)}</td><td>${r.urgent?'はい':'—'}</td><td><span class=\"badge ${r.status==='completed'?'ok':r.status==='rejected'?'high':'low'}\">${esc(r.status)}</span></td></tr>`).join(''):'<tr><td colspan=\"8\" class=\"empty\">制作依頼はありません。</td></tr>';$$('.request-link').forEach(a=>a.onclick=e=>{e.preventDefault();openRequest(requests.find(r=>String(r.id)===String(a.dataset.id)))})}"""
-          new="""const requestStatuses=['new','reviewing','quoted','contracted','in_progress','completed','rejected'];
-function renderRequests(list){$('#requestRows').innerHTML=list.length?list.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleString('ja-JP'))}</td><td>${esc(r.name)}<br><span class=\"msg\">${esc(r.email)}</span></td><td>${esc(r.category)}</td><td><a href=\"#\" class=\"request-link\" data-id=\"${esc(r.id)}\">${esc(r.title)}</a></td><td>${esc(r.budget)}</td><td>${esc(r.deadline)}</td><td>${r.urgent?'はい':'—'}</td><td><select class=\"request-status\" data-id=\"${esc(r.id)}\">${requestStatuses.map(s=>`<option value=\"${s}\" ${r.status===s?'selected':''}>${s}</option>`).join('')}</select><span class=\"request-msg msg\" data-id=\"${esc(r.id)}\"></span></td></tr>`).join(''):'<tr><td colspan=\"8\" class=\"empty\">制作依頼はありません。</td></tr>';$$('.request-link').forEach(a=>a.onclick=e=>{e.preventDefault();openRequest(requests.find(r=>String(r.id)===String(a.dataset.id)))});$$('.request-status').forEach(s=>s.onchange=()=>updateRequestStatus(s.dataset.id,s.value))}
-async function updateRequestStatus(id,status){const msg=$(`.request-msg[data-id=\"${id}\"]`);if(msg)msg.textContent='保存中...';const{data,error}=await sb.from('service_requests').update({status}).eq('id',id).select('id,status').single();if(error){console.error('request status update error:',error);if(msg)msg.textContent='保存失敗: '+error.message;return}const item=requests.find(x=>String(x.id)===String(id));if(item)item.status=data.status;if(msg){msg.textContent=' 保存しました';setTimeout(()=>{msg.textContent=''},1800)}}"""
-          if old not in s:
-              raise SystemExit('renderRequests target not found')
-          s=s.replace(old,new)
-          old2="const{error}=await sb.from('service_requests').update({status:$('#editStatus').value,admin_note:$('#editNote').value}).eq('id',r.id);if(error){$('#saveMsg').textContent=`保存に失敗しました: ${error.message}`;return}$('#saveMsg').textContent=' 保存しました。';await loadRequests()"
-          new2="const{data,error}=await sb.from('service_requests').update({status:$('#editStatus').value,admin_note:$('#editNote').value}).eq('id',r.id).select('id,status,admin_note').single();if(error){console.error('service request update error:',error);$('#saveMsg').textContent=`保存に失敗しました: ${error.message}`;return}r.status=data.status;r.admin_note=data.admin_note;$('#saveMsg').textContent=' 保存しました。';await loadRequests()"
-          if old2 not in s:
-              raise SystemExit('openRequest update target not found')
-          s=s.replace(old2,new2)
-          p.write_text(s)
+          import re
+          p = Path('admin.html')
+          s = p.read_text()
+          pattern = r"const\{error\}=await sb\.from\('service_requests'\)\.update\(\{status:\$\('#editStatus'\)\.value,admin_note:\$\('#editNote'\)\.value\}\)\.eq\('id',r\.id\);if\(error\)\{\$\('#saveMsg'\)\.textContent=`保存に失敗しました: \$\{error\.message\}`;return\}\$\('#saveMsg'\)\.textContent=' 保存しました。';await loadRequests\(\)"
+          replacement = "const{data,error}=await sb.from('service_requests').update({status:$('#editStatus').value,admin_note:$('#editNote').value}).eq('id',r.id).select('id,status,admin_note').single();if(error){console.error('service request update error:',error);$('#saveMsg').textContent=`保存に失敗しました: ${error.message}`;return}r.status=data.status;r.admin_note=data.admin_note;$('#saveMsg').textContent=' 保存しました。';await loadRequests()"
+          s2, n = re.subn(pattern, replacement, s, count=1)
+          if n != 1:
+              raise SystemExit(f'update target not found: {n}')
+          p.write_text(s2)
+          print('admin.html patched')
           PY
       - name: Commit patch
         run: |
@@ -36,5 +31,5 @@ async function updateRequestStatus(id,status){const msg=$(`.request-msg[data-id=
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add admin.html
           git diff --cached --quiet && exit 0
-          git commit -m 'fix: make service request status updates reliable [skip ci]'
+          git commit -m 'fix: verify service request status updates [skip ci]'
           git push
