@@ -10,26 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch admin.html
+      - name: Patch admin and version
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
-          p = Path('admin.html')
-          s = p.read_text()
-          pattern = r"const\{error\}=await sb\.from\('service_requests'\)\.update\(\{status:\$\('#editStatus'\)\.value,admin_note:\$\('#editNote'\)\.value\}\)\.eq\('id',r\.id\);if\(error\)\{\$\('#saveMsg'\)\.textContent=`保存に失敗しました: \$\{error\.message\}`;return\}\$\('#saveMsg'\)\.textContent=' 保存しました。';await loadRequests\(\)"
-          replacement = "const{data,error}=await sb.from('service_requests').update({status:$('#editStatus').value,admin_note:$('#editNote').value}).eq('id',r.id).select('id,status,admin_note').single();if(error){console.error('service request update error:',error);$('#saveMsg').textContent=`保存に失敗しました: ${error.message}`;return}r.status=data.status;r.admin_note=data.admin_note;$('#saveMsg').textContent=' 保存しました。';await loadRequests()"
-          s2, n = re.subn(pattern, replacement, s, count=1)
-          if n != 1:
-              raise SystemExit(f'update target not found: {n}')
-          p.write_text(s2)
-          print('admin.html patched')
+          import re, json
+          p=Path('admin.html')
+          s=p.read_text()
+          pattern=r"const\{error\}=await sb\.from\('service_requests'\)\.update\(\{status:\$\('#editStatus'\)\.value,admin_note:\$\('#editNote'\)\.value\}\)\.eq\('id',r\.id\);if\(error\)\{\$\('#saveMsg'\)\.textContent=`保存に失敗しました: \$\{error\.message\}`;return\}\$\('#saveMsg'\)\.textContent=' 保存しました。';await loadRequests\(\)"
+          replacement="const{data,error}=await sb.from('service_requests').update({status:$('#editStatus').value,admin_note:$('#editNote').value}).eq('id',r.id).select('id,status,admin_note').single();if(error){console.error('service request update error:',error);$('#saveMsg').textContent=`保存に失敗しました: ${error.message}`;return}r.status=data.status;r.admin_note=data.admin_note;$('#saveMsg').textContent=' 保存しました。';await loadRequests()"
+          s,n=re.subn(pattern,replacement,s,count=1)
+          if n!=1: raise SystemExit(f'admin patch target not found: {n}')
+          p.write_text(s)
+          v=Path('VERSION.json')
+          d=json.loads(v.read_text())
+          d['version']='v1.1.1'
+          d['updated']='2026-09-02'
+          d['changes'].insert(0,'制作依頼のステータス保存処理を強化し、更新結果を検証するよう修正')
+          v.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
+          i=Path('index.html')
+          t=i.read_text()
+          t=t.replace('v1.1.0','v1.1.1').replace('1.1.0','1.1.1')
+          i.write_text(t)
           PY
       - name: Commit patch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add admin.html
+          git add admin.html VERSION.json index.html
           git diff --cached --quiet && exit 0
-          git commit -m 'fix: verify service request status updates [skip ci]'
+          git commit -m 'fix: make service request status updates reliable [skip ci]'
           git push
