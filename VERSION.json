@@ -1,6 +1,6 @@
 {
   "product": "Vocalink-team Official Site",
-  "version": "v1.1.0",
+  "version": "v1.1.1",
   "updated": "2026-09-02",
   "versioning": {
     "major": "大規模変更",
@@ -8,6 +8,7 @@
     "patch": "軽微な修正"
   },
   "changes": [
+    "制作依頼のステータス保存処理を強化し、更新結果を検証するよう修正",
     "求人・応募のステータス管理機能を追加",
     "求人・応募の管理者削除機能を追加",
     "team_applicationsに管理用statusと管理者向け更新・削除ポリシーを追加",
