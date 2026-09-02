@@ -1,13 +1,16 @@
 {
   "product": "Vocalink-team Official Site",
-  "version": "v1.0.3",
-  "updated": "2026-09-01",
+  "version": "v1.1.0",
+  "updated": "2026-09-02",
   "versioning": {
     "major": "大規模変更",
     "minor": "機能追加",
     "patch": "軽微な修正"
   },
   "changes": [
+    "求人・応募のステータス管理機能を追加",
+    "求人・応募の管理者削除機能を追加",
+    "team_applicationsに管理用statusと管理者向け更新・削除ポリシーを追加",
     "admin.htmlのボタン初期化エラーを再修正（致命的なJavaScript停止を解消）",
     "admin.htmlのクイック操作ボタン初期化エラーを修正",
     "querySelectorAllを使用して全ボタンのイベント登録を正常化",
